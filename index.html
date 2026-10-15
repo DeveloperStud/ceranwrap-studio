@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CeranWrap Studio — Free Artistic Nude Study & Generator</title>
+<style>
+:root{--bg:#0a0a0b;--surface:#141416;--surface2:#1c1c1f;--ink:#f4f1ea;--muted:#9a958c;--accent:#c9a27c;--accent2:#e8d5b5;--ok:#6b9b7a;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh}
+a{color:var(--accent2);text-decoration:none}
+header{position:sticky;top:0;z-index:50;background:rgba(10,10,11,.92);backdrop-filter:blur(12px);border-bottom:1px solid #222;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.logo{font-weight:700;letter-spacing:.04em;font-size:1.05rem;color:var(--accent2)}
+.logo span{color:var(--muted);font-weight:400}
+nav{display:flex;gap:1rem;flex-wrap:wrap;font-size:.9rem}
+nav a{color:var(--muted)} nav a:hover,nav a.active{color:var(--ink)}
+main{max-width:1100px;margin:0 auto;padding:1.5rem 1.25rem 4rem}
+h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;letter-spacing:-.02em;margin-bottom:.4rem}
+.lede{color:var(--muted);max-width:52ch;margin-bottom:1.75rem}
+.badge{display:inline-block;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .55rem;border-radius:999px;background:#2a241c;color:var(--accent);border:1px solid #3d3428;margin-bottom:.75rem}
+.grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:1.5rem}
+@media(max-width:840px){.grid-2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid #252528;border-radius:var(--radius);overflow:hidden}
+.card-body{padding:1.1rem 1.2rem 1.3rem}
+.player-wrap{position:relative;background:#000;aspect-ratio:1;max-height:70vh}
+.player-wrap video,.player-wrap .placeholder{width:100%;height:100%;object-fit:cover;display:block}
+.placeholder{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.95rem;padding:2rem;text-align:center}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.85rem 1rem;background:var(--surface2);border-top:1px solid #2a2a2e}
+button,.btn{appearance:none;border:none;cursor:pointer;background:#2a2a2e;color:var(--ink);padding:.45rem .85rem;border-radius:8px;font-size:.85rem;transition:background .15s}
+button:hover{background:#36363b}
+button.primary{background:var(--accent);color:#1a120c;font-weight:600}
+button.primary:hover{background:var(--accent2)}
+button.ghost{background:transparent;border:1px solid #3a3a40}
+.speed-btns button.active{background:var(--accent);color:#1a120c}
+input[type=range]{width:100%;accent-color:var(--accent)}
+label.field{display:block;font-size:.8rem;color:var(--muted);margin-bottom:.25rem}
+.form-row{margin-bottom:.9rem}
+select,textarea,input[type=text],input[type=number]{width:100%;background:#0e0e10;border:1px solid #2e2e34;color:var(--ink);border-radius:8px;padding:.55rem .7rem;font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+.chip{font-size:.75rem;padding:.3rem .65rem;border-radius:999px;background:#222;border:1px solid #333;cursor:pointer;color:var(--muted)}
+.chip:hover,.chip.on{background:#2a241c;border-color:var(--accent);color:var(--accent2)}
+section{margin-top:2.75rem}
+section h2{font-size:1.25rem;margin-bottom:.85rem;font-weight:600}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem}
+.thumb{aspect-ratio:1;background:var(--surface2);border-radius:10px;border:1px solid #2a2a2e;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.8rem;text-align:center;padding:.5rem}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.store{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.store .card{padding:1.2rem}
+.store h3{font-size:1rem;margin-bottom:.35rem}
+.store p{font-size:.85rem;color:var(--muted);margin-bottom:.9rem}
+.price{color:var(--ok);font-weight:600;font-size:.9rem;margin-bottom:.7rem}
+footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid #222;color:var(--muted);font-size:.8rem;text-align:center}
+.prompt-out{background:#0c0c0e;border:1px solid #2e2e34;border-radius:10px;padding:.9rem;font-family:ui-monospace,monospace;font-size:.8rem;white-space:pre-wrap;word-break:break-word;max-height:180px;overflow:auto;color:#d8d0c4}
+.toast{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:#1e1e22;border:1px solid #3a3a40;padding:.7rem 1.1rem;border-radius:10px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .25s;z-index:100}
+.toast.show{opacity:1}
+.feature-list{list-style:none;font-size:.85rem;color:var(--muted)}
+.feature-list li{margin-bottom:.35rem;padding-left:1.1rem;position:relative}
+.feature-list li::before{content:"✦";position:absolute;left:0;color:var(--accent);font-size:.7rem}
+.tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.tab{padding:.4rem .8rem;border-radius:8px;background:#1a1a1e;color:var(--muted);border:1px solid #2a2a2e;cursor:pointer;font-size:.8rem}
+.tab.on{background:#2a241c;color:var(--accent2);border-color:#4a3c2c}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">CeranWrap <span>Studio</span></div>
+  <nav>
+    <a href="#viewer" class="active">Viewer</a>
+    <a href="#generate">Generate</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#store">Free Drops</a>
+  </nav>
+</header>
+<main>
+  <div class="badge">Free · Art Photography · No signup</div>
+  <h1>Ceran / Saran Wrap Studies</h1>
+  <p class="lede">Interactive viewer + free image-generation tool for artistic nude photography. Stretch, press, and light the wrap — then copy a ready prompt for Grok Imagine.</p>
+
+  <div class="grid-2" id="viewer">
+    <div class="card">
+      <div class="player-wrap" id="playerArea">
+        <div class="placeholder" id="vidFallback">
+          Study #001 — Rear wrap stretch<br/><br/>
+          <a href="https://grok.com/imagine/post/2910c73d-e099-4a50-b772-3e200acf793a?source=agent" target="_blank" rel="noopener">Open the video study →</a>
+          <br/><br/><span style="font-size:.8rem">Direct embed may be blocked; open the share link for full motion.</span>
+        </div>
+        <video id="vid" playsinline loop muted style="display:none"></video>
+      </div>
+      <div class="controls">
+        <button type="button" id="btnOpen" class="primary">Open study video</button>
+        <button type="button" id="btnLoop" class="ghost">Loop on</button>
+        <span style="font-size:.8rem;color:var(--muted)">Speed & scrub available when video loads locally</span>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.85rem;color:var(--muted)">Study #001 — Rear wrap · hands spreading gluteus · pressed & taut plastic · soft studio light</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h2 style="font-size:1.05rem;margin-bottom:.6rem">Study controls (B)</h2>
+        <ul class="feature-list">
+          <li>Open full video study in new tab</li>
+          <li>Capture stills when video is local / same-origin</li>
+          <li>Prompt builder for new free generations</li>
+          <li>Local history & JSON export</li>
+        </ul>
+        <div style="margin-top:1.1rem">
+          <label class="field">Captured stills</label>
+          <div id="stills" class="gallery" style="grid-template-columns:repeat(3,1fr)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="generate">
+    <h2>Free Image Generation Tool</h2>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem">New features: pose presets · pressure intensity · multi-view · variation seed · prompt history · one-click copy.</p>
+    <div class="card"><div class="card-body">
+      <div class="tabs" id="genTabs">
+        <button type="button" class="tab on" data-tab="builder">Prompt builder</button>
+        <button type="button" class="tab" data-tab="history">History</button>
+        <button type="button" class="tab" data-tab="presets">Quick presets</button>
+      </div>
+      <div id="tab-builder">
+        <div class="form-row">
+          <label class="field">Pose / focus</label>
+          <select id="pose">
+            <option value="front">Front — wrap pressed firmly over vulva</option>
+            <option value="rear" selected>Rear — wrap stretching over gluteus</option>
+            <option value="side">Side profile — hip & wrap tension</option>
+            <option value="threeq">Three-quarter — full torso wrap</option>
+            <option value="close">Extreme close-up of stretched wrap</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="field">Pressure / stretch intensity <span id="pressVal">70</span>%</label>
+          <input type="range" id="pressure" min="20" max="100" value="70" />
+        </div>
+        <div class="form-row">
+          <label class="field">Wrap material</label>
+          <div class="chips" id="materialChips">
+            <span class="chip on" data-v="clear saran wrap / ceran plastic film">Saran / Ceran</span>
+            <span class="chip" data-v="sheer wet-look PVC film">PVC wet-look</span>
+            <span class="chip" data-v="translucent cling film multi-layer">Multi-layer cling</span>
+            <span class="chip" data-v="glossy plastic body bag aesthetic art">Gloss art wrap</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="field">Lighting</label>
+          <div class="chips" id="lightChips">
+            <span class="chip on" data-v="soft diffused studio light, pale gray seamless">Soft studio</span>
+            <span class="chip" data-v="hard side rim light, high contrast specular on plastic">Hard rim</span>
+            <span class="chip" data-v="warm golden hour window light">Warm window</span>
+            <span class="chip" data-v="cool blue clinical art light">Cool clinical</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="field">Hands / action</label>
+          <div class="chips" id="handsChips">
+            <span class="chip on" data-v="model's hands spreading and stretching the wrap">Spreading hands</span>
+            <span class="chip" data-v="hands pressing firmly into the wrap creating folds">Pressing</span>
+            <span class="chip" data-v="no hands, wrap alone stretched taut">Wrap alone</span>
+            <span class="chip" data-v="hands teasing edges of the wrap">Teasing edges</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="field">Extra notes</label>
+          <input type="text" id="extra" placeholder="e.g. freckles, short hair, wet skin..." />
+        </div>
+        <div class="form-row">
+          <label class="field">Variation seed (new)</label>
+          <input type="number" id="seed" placeholder="blank = random" min="0" />
+        </div>
+        <div class="form-row">
+          <label class="field">Multi-view (new)</label>
+          <select id="multiview">
+            <option value="single">Single hero frame</option>
+            <option value="diptych">Diptych (front + rear)</option>
+            <option value="tri">Triptych stretch sequence</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+          <button type="button" class="primary" id="btnBuild">Build prompt</button>
+          <button type="button" class="ghost" id="btnRandom">Randomize</button>
+          <button type="button" class="ghost" id="btnCopy">Copy prompt</button>
+          <button type="button" class="ghost" id="btnSaveHist">Save to history</button>
+        </div>
+        <div style="margin-top:1rem">
+          <label class="field">Ready prompt</label>
+          <div class="prompt-out" id="promptOut">Click “Build prompt”.</div>
+        </div>
+      </div>
+      <div id="tab-history" class="hidden"><div id="histList" style="font-size:.85rem;color:var(--muted)">No saved prompts yet.</div></div>
+      <div id="tab-presets" class="hidden">
+        <div class="chips" id="presetList" style="flex-direction:column;align-items:stretch;gap:.5rem">
+          <button type="button" class="chip" style="text-align:left;padding:.7rem" data-preset="front firm">Front firm stretch over vag</button>
+          <button type="button" class="chip" style="text-align:left;padding:.7rem" data-preset="rear glute">Rear glute spread + wrap (current study)</button>
+          <button type="button" class="chip" style="text-align:left;padding:.7rem" data-preset="wet multi">Wet multi-layer cling, hard rim</button>
+          <button type="button" class="chip" style="text-align:left;padding:.7rem" data-preset="close texture">Extreme close-up plastic texture</button>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section id="gallery">
+    <h2>Gallery (A)</h2>
+    <div class="gallery" id="galleryGrid">
+      <div class="thumb"><a href="https://grok.com/imagine/post/2910c73d-e099-4a50-b772-3e200acf793a?source=agent" target="_blank">Study #001<br/>wrap rear →</a></div>
+      <div class="thumb">Slot for new gen</div>
+      <div class="thumb">Slot for new gen</div>
+      <div class="thumb">Slot for new gen</div>
+    </div>
+  </section>
+
+  <section id="store">
+    <h2>Free drops (C)</h2>
+    <div class="store">
+      <div class="card">
+        <h3>Still pack</h3>
+        <p class="price">$0 · Free</p>
+        <p>Capture stills from studies. No account.</p>
+        <button type="button" class="primary" id="btnDownloadStills">Download stills</button>
+      </div>
+      <div class="card">
+        <h3>Prompt pack</h3>
+        <p class="price">$0 · Open</p>
+        <p>Export history as JSON for any image model.</p>
+        <button type="button" class="ghost" id="btnExportJson">Export history JSON</button>
+      </div>
+      <div class="card">
+        <h3>New features</h3>
+        <p class="price">Built-in</p>
+        <p>Pressure slider · multi-view · seed · material chips · copy · local history.</p>
+        <button type="button" class="ghost" onclick="document.getElementById('generate').scrollIntoView({behavior:'smooth'})">Open generator</button>
+      </div>
+    </div>
+  </section>
+  <footer>CeranWrap Studio · Free artistic tool · Adult fine-art photography · No tracking</footer>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  const toast=document.getElementById('toast');
+  const promptOut=document.getElementById('promptOut');
+  const stills=document.getElementById('stills');
+  let history=JSON.parse(localStorage.getItem('cws_hist')||'[]');
+  function showToast(m){toast.textContent=m;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
+  document.getElementById('btnOpen').onclick=()=>window.open('https://grok.com/imagine/post/2910c73d-e099-4a50-b772-3e200acf793a?source=agent','_blank');
+  document.getElementById('btnLoop').onclick=function(){this.textContent=this.textContent.includes('on')?'Loop off':'Loop on'};
+  function wireChips(id){document.querySelectorAll('#'+id+' .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on')})}
+  wireChips('materialChips');wireChips('lightChips');wireChips('handsChips');
+  document.getElementById('pressure').oninput=e=>document.getElementById('pressVal').textContent=e.target.value;
+  function selectedChip(id){const o=document.querySelector('#'+id+' .chip.on');return o?o.dataset.v:''}
+  function buildPrompt(){
+    const poseMap={front:'front view of a nude art photography model, ceran wrap pressed firmly stretching over the vulva and mons, taut transparent plastic clinging to skin',rear:'rear view of a nude art photography model, ceran wrap pressed firmly stretching over the gluteus and crotch, hands spreading and stretching the wrap',side:'side profile of a nude art photography model with ceran wrap stretched tightly over hips and buttocks',threeq:'three-quarter view nude art photography model fully wrapped in stretched ceran film over torso and hips',close:'extreme close-up of clear ceran wrap stretched taut over nude skin, plastic texture and skin pores visible, artistic nude detail'};
+    const pose=document.getElementById('pose').value;
+    const pressure=document.getElementById('pressure').value;
+    let p=poseMap[pose]||poseMap.rear;
+    p+=`, ${selectedChip('materialChips')}, intensity ${pressure}% stretch and press, ${selectedChip('handsChips')}, ${selectedChip('lightChips')}`;
+    p+=', elegant artistic nude photography style, high detail photorealistic, tasteful erotic fine art composition';
+    const extra=document.getElementById('extra').value.trim();
+    if(extra)p+=', '+extra;
+    const multi=document.getElementById('multiview').value;
+    if(multi==='diptych')p+='. Diptych: matching front and rear wrap studies side by side';
+    if(multi==='tri')p+='. Triptych sequence showing progressive stretch of the wrap';
+    const seed=document.getElementById('seed').value;
+    if(seed)p+='. Seed: '+seed;
+    p+='.';
+    promptOut.textContent=p;return p;
+  }
+  document.getElementById('btnBuild').onclick=()=>{buildPrompt();showToast('Prompt ready')};
+  document.getElementById('btnRandom').onclick=()=>{
+    const poses=document.getElementById('pose').options;
+    document.getElementById('pose').selectedIndex=Math.floor(Math.random()*poses.length);
+    document.getElementById('pressure').value=40+Math.floor(Math.random()*55);
+    document.getElementById('pressVal').textContent=document.getElementById('pressure').value;
+    document.getElementById('seed').value=Math.floor(Math.random()*99999);
+    ['materialChips','lightChips','handsChips'].forEach(id=>{const chips=[...document.querySelectorAll('#'+id+' .chip')];chips.forEach(c=>c.classList.remove('on'));chips[Math.floor(Math.random()*chips.length)].classList.add('on')});
+    buildPrompt();showToast('Randomized');
+  };
+  document.getElementById('btnCopy').onclick=async()=>{try{await navigator.clipboard.writeText(promptOut.textContent);showToast('Copied')}catch{showToast('Copy manually')}};
+  document.getElementById('btnSaveHist').onclick=()=>{const t=promptOut.textContent;if(!t||t.startsWith('Click'))return showToast('Build first');history.unshift({t,at:new Date().toISOString()});if(history.length>40)history.pop();localStorage.setItem('cws_hist',JSON.stringify(history));renderHist();showToast('Saved')};
+  function renderHist(){const el=document.getElementById('histList');if(!history.length){el.textContent='No saved prompts yet.';return}el.innerHTML=history.map((h,i)=>`<div style="margin-bottom:.8rem;padding:.7rem;background:#121214;border-radius:8px;border:1px solid #2a2a2e"><div style="font-size:.7rem;color:#666;margin-bottom:.3rem">${h.at}</div><div style="font-size:.78rem;color:#ccc">${h.t.slice(0,180)}…</div><button type="button" class="ghost" style="margin-top:.4rem;font-size:.75rem" data-i="${i}">Load</button></div>`).join('');el.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{promptOut.textContent=history[+b.dataset.i].t;showToast('Loaded')})}
+  renderHist();
+  document.querySelectorAll('#genTabs .tab').forEach(tab=>tab.onclick=()=>{document.querySelectorAll('#genTabs .tab').forEach(t=>t.classList.remove('on'));tab.classList.add('on');['builder','history','presets'].forEach(n=>document.getElementById('tab-'+n).classList.toggle('hidden',tab.dataset.tab!==n))});
+  document.querySelectorAll('[data-preset]').forEach(btn=>btn.onclick=()=>{const p=btn.dataset.preset;if(p==='front firm'){document.getElementById('pose').value='front';document.getElementById('pressure').value=90}else if(p==='rear glute'){document.getElementById('pose').value='rear';document.getElementById('pressure').value=75}else if(p==='wet multi'){document.getElementById('pose').value='threeq';document.getElementById('pressure').value=80}else{document.getElementById('pose').value='close';document.getElementById('pressure').value=85}document.getElementById('pressVal').textContent=document.getElementById('pressure').value;buildPrompt();document.querySelector('#genTabs .tab[data-tab="builder"]').click();showToast('Preset loaded')});
+  document.getElementById('btnDownloadStills').onclick=()=>{const imgs=stills.querySelectorAll('img');if(!imgs.length)return showToast('No stills yet');imgs.forEach((img,i)=>{const a=document.createElement('a');a.href=img.src;a.download='ceranwrap-still-'+(i+1)+'.jpg';a.click()});showToast('Downloading')};
+  document.getElementById('btnExportJson').onclick=()=>{const blob=new Blob([JSON.stringify(history,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ceranwrap-prompt-history.json';a.click();showToast('JSON exported')};
+  document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();const id=a.getAttribute('href').slice(1);document.getElementById(id)?.scrollIntoView({behavior:'smooth'});document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));a.classList.add('active')});
+})();
+</script>
+</body>
+</html>
